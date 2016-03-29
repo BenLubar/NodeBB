@@ -100,6 +100,8 @@ function onMessage(socket, payload) {
 		return socket.disconnect();
 	}
 
+	var start = Date.now();
+
 	async.waterfall([
 		function (next) {
 			validateSession(socket, next);
@@ -115,6 +117,10 @@ function onMessage(socket, payload) {
 			methodToCall(socket, params, next);
 		}
 	], function(err, result) {
+		var end = Date.now();
+		if (end - start > 750) {
+			winston.warn('[socket.io] slow callback - ' + (end - start) + 'ms - uid: ' + socket.uid + ' - ip: ' + socket.ip + ' - event: ' + eventName + ' - params: ' + JSON.stringify(params) + ' - err: ' + String(err));
+		}
 		callback(err ? {message: err.message} : null, result);
 	});
 }
