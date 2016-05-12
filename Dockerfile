@@ -7,9 +7,18 @@ ENV NODE_ENV=production \
     daemon=false \
     silent=false
 
-# nodebb setup will ask you for connection information to a redis (default), mongodb then run the forum
-# nodebb upgrade is not included and might be desired
-CMD node app --setup && npm start
-
 # the default port for NodeBB is exposed outside the container
 EXPOSE 4567
+
+VOLUME /usr/src/app/docker
+VOLUME /usr/src/app/public/uploads
+
+# save the config in a volume so the container can be discarded
+RUN ln -s /usr/src/app/docker/config.json /usr/src/app/config.json
+
+# make sure the uploads subdirectories exist, run any database migrations,
+# and set the container's process as the NodeBB daemon so ./nodebb works
+CMD git checkout -- public/uploads \
+&& ./nodebb upgrade \
+&& echo 1 > pidfile \
+&& exec node loader.js
