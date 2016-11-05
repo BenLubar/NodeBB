@@ -53,5 +53,7 @@
 	"composer.custom-help": "Custom Help Text",
 	"ip-tracking": "IP Tracking",
 	"ip-tracking.each-post": "Track IP Address for each post",
+	"moderation-settings": "Moderation Settings",
+	"moderation-settings.allow-self-flag": "Allow users to flag their own posts",
 	"enable-post-history": "Enable Post History"
 }

@@ -10,6 +10,7 @@ const plugins = require('../../plugins');
 const social = require('../../social');
 const user = require('../../user');
 const utils = require('../../utils');
+const meta = require('../../meta');
 
 
 module.exports = function (SocketPosts) {
@@ -41,7 +42,7 @@ module.exports = function (SocketPosts) {
 		postData.display_edit_tools = results.canEdit.flag;
 		postData.display_delete_tools = results.canDelete.flag;
 		postData.display_purge_tools = results.canPurge;
-		postData.display_flag_tools = socket.uid && !postData.selfPost && results.canFlag.flag;
+		postData.display_flag_tools = socket.uid && (!posts.selfPost || parseInt(meta.config.allowSelfFlag, 10) === 1) && results.canFlag.flag;
 		postData.display_moderator_tools = postData.display_edit_tools || postData.display_delete_tools;
 		postData.display_move_tools = results.isAdmin || results.isModerator;
 		postData.display_change_owner_tools = results.isAdmin || results.isModerator;
