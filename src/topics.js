@@ -234,6 +234,13 @@ var social = require('./social');
 	function getMainPostAndReplies(topic, set, uid, start, stop, reverse, callback) {
 		async.waterfall([
 			function (next) {
+				if (stop > 0) {
+					stop--;
+					if (start > 0) {
+						start --;
+					}
+				}
+
 				posts.getPidsFromSet(set, start, stop, reverse, next);
 			},
 			function (pids, next) {
