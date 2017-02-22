@@ -13,7 +13,7 @@ var schemaDate;
 var thisSchemaDate;
 
 // IMPORTANT: REMEMBER TO UPDATE VALUE OF latestSchema
-var latestSchema = Date.UTC(2016, 10, 22);
+var latestSchema = Date.UTC(2017, 1, 22);
 
 Upgrade.check = function (callback) {
 	db.get('schemaDate', function (err, value) {
@@ -314,6 +314,44 @@ Upgrade.upgrade = function (callback) {
 				next();
 			}
 		},
+		function (next) {
+			thisSchemaDate = Date.UTC(2017, 1, 22);
+			var schemaName = '[2017/2/22] Fixing urls in config';
+
+			if (schemaDate < thisSchemaDate) {
+				updatesMade = true;
+				winston.info(schemaName);
+				async.waterfall([
+					function (cb) {
+						db.getObject('config', cb);
+					},
+					function (config, cb) {
+						if (!config) {
+							return cb();
+						}
+
+						Object.keys(config).forEach(function (key) {
+							var oldValue = config[key];
+
+							if (typeof oldValue !== 'string') {
+								return;
+							}
+						
+							config[key] = oldValue.replace(/(\/assets)?\/images\//g, '/assets/images/');
+						});
+
+						db.setObject('config', config, cb);
+					},
+					function (next) {
+						winston.info(schemaName + ' - done');
+						Upgrade.update(thisSchemaDate, next);
+					}
+				], next);
+			} else {
+				winston.info(schemaName + ' - skipped!');
+				next();
+			}
+		}
 		// Add new schema updates here
 		// IMPORTANT: REMEMBER TO UPDATE VALUE OF latestSchema IN LINE 24!!!
 	], function (err) {
