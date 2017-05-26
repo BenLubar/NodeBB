@@ -1,7 +1,7 @@
 'use strict';
 
 var async = require('async');
-var _ = require('underscore');
+var _ = require('lodash');
 
 var db = require('./database');
 var posts = require('./posts');
@@ -134,8 +134,12 @@ var social = require('./social');
 				}, next);
 			},
 			function (results, next) {
-				var users = _.object(uids, results.users);
-				var categories = _.object(cids, results.categories);
+				var users = _.fromPairs(results.users.map(function (user) {
+					return [user.uid, user];
+				}));
+				var categories = _.fromPairs(results.categories.map(function (cat) {
+					return [cat.cid, cat];
+				}));
 
 				for (var i = 0; i < topics.length; i += 1) {
 					if (topics[i]) {
