@@ -4,7 +4,6 @@ var async = require('async');
 var nconf = require('nconf');
 var url = require('url');
 var winston = require('winston');
-var S = require('string');
 
 var meta = require('../meta');
 var cache = require('./cache');
@@ -82,7 +81,6 @@ module.exports = function (Posts) {
 
 	function sanitizeSignature(signature) {
 		signature = translator.escape(signature);
-		var string = S(signature);
 		var tagsToStrip = [];
 
 		if (parseInt(meta.config['signatures:disableLinks'], 10) === 1) {
@@ -93,6 +91,8 @@ module.exports = function (Posts) {
 			tagsToStrip.push('img');
 		}
 
-		return tagsToStrip.length ? string.stripTags.apply(string, tagsToStrip).s : signature;
+		signature = stripTags(signature, tagsToStrip);
+
+		return signature;
 	}
 };
