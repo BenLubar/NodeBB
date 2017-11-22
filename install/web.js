@@ -27,6 +27,8 @@ winston.add(winston.transports.File, {
 var web = {};
 var scripts = [
 	'node_modules/jquery/dist/jquery.js',
+	'public/vendor/xregexp/xregexp.js',
+	'public/vendor/xregexp/unicode/unicode-base.js',
 	'public/src/utils.js',
 	'public/src/installer/install.js',
 ];
